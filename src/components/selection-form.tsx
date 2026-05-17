@@ -84,6 +84,8 @@ export function SelectionForm() {
   function approveStandard(id: string) {
     setRequestType("standard_approved");
     setSelectedId(id);
+    setOpenMac(false);
+    setOpenWin(false);
     setRam("");
     setStorage("");
     setScreen("");
@@ -475,7 +477,7 @@ function LaptopGroup({
             <LaptopOption
               key={l.id}
               laptop={l}
-              checked={selectedId === l.id}
+              checked={active && selectedId === l.id}
               onSelect={() => onSelect(l.id)}
             />
           ))}

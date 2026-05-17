@@ -16,6 +16,7 @@ export function StorefrontLoginForm() {
   const nextPath = safeNextParam(searchParams.get("next"));
 
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -59,16 +60,27 @@ export function StorefrontLoginForm() {
           Enter the shared team password.
         </p>
       </div>
-      <input
-        type="password"
-        name="password"
-        autoComplete="current-password"
-        autoFocus
-        placeholder="Password"
-        value={password}
-        onChange={(ev) => setPassword(ev.target.value)}
-        className="w-full rounded-md border border-zinc-200 bg-white px-3 py-2.5 text-[14px] text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-[color:var(--rain-pink)] focus:ring-2 focus:ring-[color:var(--rain-pink)]/25"
-      />
+      <div className="space-y-2">
+        <input
+          type={showPassword ? "text" : "password"}
+          name="password"
+          autoComplete="current-password"
+          autoFocus
+          placeholder="Password"
+          value={password}
+          onChange={(ev) => setPassword(ev.target.value)}
+          className="w-full rounded-md border border-zinc-200 bg-white px-3 py-2.5 text-[14px] text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-[color:var(--rain-pink)] focus:ring-2 focus:ring-[color:var(--rain-pink)]/25"
+        />
+        <label className="inline-flex cursor-pointer items-center gap-2 text-[12px] font-medium text-zinc-500 transition hover:text-zinc-700">
+          <input
+            type="checkbox"
+            checked={showPassword}
+            onChange={(ev) => setShowPassword(ev.target.checked)}
+            className="h-3.5 w-3.5 rounded border-zinc-300 accent-[color:var(--rain-pink)]"
+          />
+          Show password
+        </label>
+      </div>
       {error && (
         <p className="text-[12px] text-rose-600" role="alert">
           {error}
