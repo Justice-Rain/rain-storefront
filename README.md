@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rain new-hire laptop storefront
 
-## Getting Started
+A small internal Next.js app that lets new hires at Rain swap their default
+laptop for a different option. Submissions land in a Google Form (or any
+configured email / form backend).
 
-First, run the development server:
+- **Default standards** (read-only reference on the page):
+  - MacBook Air · Operations
+  - MacBook Pro · Engineering
+- **Choosable alternatives** (grouped into Mac / Windows dropdowns):
+  - MacBook Air 13" · M3
+  - MacBook Pro 14" or 16" · M4 Pro
+  - Microsoft Surface Laptop · Snapdragon X Elite
+  - Lenovo ThinkPad P1 Gen 8
 
-```bash
+Whole page is gated by a shared password (HTTP-only signed cookie, 30-day
+session). Submissions go through `/api/submit` which can fan-out to any of:
+Resend, a Google Form, or a generic JSON form endpoint.
+
+## Local dev
+
+```sh
+cp .env.example .env.local
+# fill in STOREFRONT_PASSWORD + STOREFRONT_SESSION_SECRET, plus one delivery option
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>, enter the password from `.env.local`, pick a
+laptop, fill in shipping details, submit.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See [`.env.example`](./.env.example). At minimum you need:
 
-## Learn More
+| Variable | Purpose |
+|---|---|
+| `STOREFRONT_PASSWORD` | Password shared with new hires |
+| `STOREFRONT_SESSION_SECRET` | Used to sign the session cookie (generate with `openssl rand -base64 32`) |
 
-To learn more about Next.js, take a look at the following resources:
+Then pick **one** of:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Google Form** — `STOREFRONT_GOOGLE_FORM_URL` + per-field `STOREFRONT_GOOGLE_FORM_ENTRY_*` mappings.
+- **Resend** — `STOREFRONT_RESEND_API_KEY` + `STOREFRONT_NOTIFY_EMAIL` (and optional `STOREFRONT_FROM_EMAIL`).
+- **JSON form endpoint** (Formspree etc.) — `STOREFRONT_FORM_ENDPOINT`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If you configure more than one, every successful sender counts as a success.
 
-## Deploy on Vercel
+## Deploying to Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Import this repo on [vercel.com/new](https://vercel.com/new).
+2. Add the same env vars from `.env.local` in **Project → Settings → Environment Variables**.
+3. (Optional) attach a custom domain.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Catalog data lives in [`src/lib/catalog.ts`](./src/lib/catalog.ts) — edit
+specs / add models there.
