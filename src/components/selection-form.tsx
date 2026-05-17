@@ -404,10 +404,7 @@ export function SelectionForm() {
         </p>
       )}
 
-      <div className="flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-[11.5px] text-zinc-500">
-          By submitting, you confirm the shipping details above.
-        </p>
+      <div className="flex justify-end">
         <button
           type="submit"
           disabled={!selected || status === "submitting"}
