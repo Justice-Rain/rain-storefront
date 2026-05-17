@@ -188,11 +188,11 @@ export function SelectionForm() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <h3 className="text-[14px] font-semibold text-zinc-900">
-                Keep your standard laptop
+                Keep the standard Mac
               </h3>
               <p className="mt-1 text-[12.5px] leading-snug text-zinc-500">
-                This submits your standard laptop and shipping details to the
-                sheet.
+                Recommended for most roles. This submits your standard laptop
+                and shipping details.
               </p>
             </div>
           </div>
@@ -246,8 +246,8 @@ export function SelectionForm() {
         </div>
 
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[12.5px] leading-snug text-amber-900">
-          Requesting a different model or custom specs requires manager
-          approval and a reason for the request.
+          Requests for non-standard laptops or custom specs require manager
+          approval and may not always be fulfilled. Please include a reason.
         </div>
 
         <LaptopGroup
@@ -287,7 +287,7 @@ export function SelectionForm() {
               <strong className="text-zinc-900">{selected.brand}</strong>{" "}
               <span className="text-zinc-500">({selected.modelLine})</span>. The
               boxes default to the listed specs — only fill in what should
-              change. Include a reason so your manager can approve the request.
+              change. Include a reason for manager review.
             </p>
           </header>
 

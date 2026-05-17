@@ -25,8 +25,9 @@ export default function Home() {
                 Confirm your laptop
               </h1>
               <p className="mt-1.5 text-[13.5px] leading-snug text-zinc-500">
-                If your standard laptop works, approve it below. If you request
-                a different configuration, it will require manager approval.
+                Mac is Rain&rsquo;s standard and encouraged option. If you
+                request something else, it will require manager approval and may
+                not always be fulfilled.
               </p>
             </div>
             <div className="relative hidden h-24 w-24 shrink-0 sm:block">

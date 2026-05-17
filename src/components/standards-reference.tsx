@@ -6,9 +6,9 @@ export function StandardsReference() {
     <section className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-2">
         <h2 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
-          What you&rsquo;d get by default
+          Standard Mac options
         </h2>
-        <span className="text-[11px] text-zinc-400">For reference only</span>
+        <span className="text-[11px] text-zinc-400">Encouraged</span>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         {standardLaptops.map((l) => (
