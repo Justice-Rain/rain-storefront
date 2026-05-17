@@ -181,6 +181,9 @@ export function SelectionForm() {
         <h2 className="text-[12px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
           1 · Confirm or request
         </h2>
+        <p className="text-[12.5px] leading-snug text-zinc-500">
+          Choose one option total.
+        </p>
         <div className="rounded-xl border border-zinc-200 bg-white p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -506,7 +509,7 @@ function StandardApprovalOption({
     >
       <input
         type="radio"
-        name="standardApproval"
+        name="laptopSelection"
         value={laptop.id}
         checked={checked}
         onChange={onSelect}
