@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 type SubmitPayload = {
+  requestType?: "standard_approved" | "upgrade_request";
   selection?: {
     laptopId?: string;
     brand?: string;
@@ -32,6 +33,7 @@ function plainText(p: SubmitPayload): string {
   const r = s.customRequests;
 
   lines.push("NEW HIRE LAPTOP REQUEST");
+  lines.push(`Type:    ${p.requestType ?? "unknown"}`);
   lines.push("");
   lines.push(`Name:    ${c.name ?? ""}`);
   lines.push(`Email:   ${c.email ?? ""}`);
@@ -58,9 +60,14 @@ function plainText(p: SubmitPayload): string {
     if (r.storage) lines.push(`  Storage: ${r.storage}`);
     if (r.screenSize) lines.push(`  Screen:  ${r.screenSize}`);
   }
+  if (p.requestType === "standard_approved") {
+    lines.push("");
+    lines.push("Requested changes:");
+    lines.push("  Standard approved — no changes requested.");
+  }
   lines.push("");
   lines.push("Reason:");
-  lines.push((p.reason ?? "").trim());
+  lines.push((p.reason ?? "").trim() || "(not required)");
   return lines.join("\n");
 }
 
@@ -70,7 +77,10 @@ function htmlBody(p: SubmitPayload): string {
   const r = s.customRequests;
   const base = s.baseConfig ?? {};
   const overrideList =
-    r && (r.ram || r.storage || r.screenSize)
+    p.requestType === "standard_approved"
+      ? `<h3 style="margin:24px 0 8px;">Requested changes</h3>
+         <p style="margin:0;font-size:14px;">Standard approved — no changes requested.</p>`
+      : r && (r.ram || r.storage || r.screenSize)
       ? `<h3 style="margin:24px 0 8px;">Requested changes</h3>
          <ul style="margin:0;padding-left:18px;">
            ${[
@@ -115,7 +125,11 @@ function htmlBody(p: SubmitPayload): string {
 function subjectFor(p: SubmitPayload): string {
   const who = p.contact?.name ?? "Unknown";
   const what = p.selection?.brand ?? "";
-  return `New laptop request — ${who}${what ? ` — ${what}` : ""}`;
+  const prefix =
+    p.requestType === "standard_approved"
+      ? "Standard laptop approved"
+      : "New laptop request";
+  return `${prefix} — ${who}${what ? ` — ${what}` : ""}`;
 }
 
 async function sendViaResend(
@@ -151,6 +165,9 @@ async function sendViaResend(
 }
 
 function customRequestsLine(p: SubmitPayload): string {
+  if (p.requestType === "standard_approved") {
+    return "Standard approved — no changes requested.";
+  }
   const r = p.selection?.customRequests;
   if (!r) return "";
   const parts: string[] = [];
@@ -260,7 +277,10 @@ async function sendViaFormEndpoint(
 
 function validate(p: SubmitPayload): string | null {
   if (!p.selection?.laptopId) return "Please pick a laptop.";
-  if (!p.reason || p.reason.trim().length < 5)
+  if (
+    p.requestType !== "standard_approved" &&
+    (!p.reason || p.reason.trim().length < 5)
+  )
     return "Please include a reason.";
   const c = p.contact ?? {};
   if (!c.name?.trim()) return "Please include your name.";

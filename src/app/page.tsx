@@ -22,12 +22,11 @@ export default function Home() {
                 Welcome
               </p>
               <h1 className="mt-1.5 text-[22px] font-semibold leading-tight tracking-tight text-zinc-900 sm:text-[26px]">
-                Pick a different laptop
+                Confirm your laptop
               </h1>
               <p className="mt-1.5 text-[13.5px] leading-snug text-zinc-500">
-                We sent you the specs of your standard laptop by email. If it
-                isn&rsquo;t the right fit, choose another option below and
-                we&rsquo;ll ship it instead.
+                If your standard laptop works, approve it below. If you request
+                a different configuration, it will require manager approval.
               </p>
             </div>
             <div className="relative hidden h-24 w-24 shrink-0 sm:block">
