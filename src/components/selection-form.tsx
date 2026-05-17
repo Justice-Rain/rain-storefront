@@ -573,17 +573,6 @@ function LaptopOption({
               Standard for {laptop.teamStandard}
             </span>
           )}
-          {laptop.productUrl && (
-            <a
-              href={laptop.productUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="text-[11px] font-medium text-zinc-500 underline-offset-2 hover:text-[color:var(--rain-pink)] hover:underline"
-              onClick={(ev) => ev.stopPropagation()}
-            >
-              Vendor configurator ↗
-            </a>
-          )}
         </div>
       </div>
     </label>

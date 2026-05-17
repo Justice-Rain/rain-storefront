@@ -1,4 +1,4 @@
-# Rain new-hire laptop storefront
+# Rain Store
 
 A small internal Next.js app that lets new hires at Rain swap their default
 laptop for a different option. Submissions land in a Google Form (or any

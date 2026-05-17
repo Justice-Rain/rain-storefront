@@ -23,8 +23,6 @@ export type LaptopConfig = {
   teamStandard?: TeamStandard | null;
   /** Optional list price in USD. */
   priceUsd?: number | null;
-  /** Optional vendor configurator URL. */
-  productUrl?: string | null;
 };
 
 export const laptops: LaptopConfig[] = [
@@ -62,7 +60,6 @@ export const laptops: LaptopConfig[] = [
     chip: "Snapdragon X Elite (12 Core)",
     memory: "32 GB",
     storage: "1 TB",
-    priceUsd: 2849.99,
   },
   {
     id: "lenovo-thinkpad-p1-gen-8",
@@ -74,8 +71,6 @@ export const laptops: LaptopConfig[] = [
     chip: "Intel Core Ultra 7 255H",
     memory: "32 GB LPDDR5x",
     storage: "1 TB",
-    productUrl:
-      "https://www.lenovo.com/us/en/configurator/cto/?bundleId=21Q8CTO1WWUS2",
   },
 ];
 
