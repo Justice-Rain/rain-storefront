@@ -12,6 +12,7 @@ type SubmitPayload = {
       ram?: string | null;
       storage?: string | null;
       screenSize?: string | null;
+      configurationNotes?: string | null;
     };
   };
   reason?: string;
@@ -53,12 +54,15 @@ function plainText(p: SubmitPayload): string {
       lines.push(`  ${k}: ${v}`);
     }
   }
-  if (r && (r.ram || r.storage || r.screenSize)) {
+  if (r && (r.ram || r.storage || r.screenSize || r.configurationNotes)) {
     lines.push("");
     lines.push("Requested changes:");
     if (r.ram) lines.push(`  RAM:     ${r.ram}`);
     if (r.storage) lines.push(`  Storage: ${r.storage}`);
     if (r.screenSize) lines.push(`  Screen:  ${r.screenSize}`);
+    if (r.configurationNotes) {
+      lines.push(`  Notes:   ${r.configurationNotes}`);
+    }
   }
   if (p.requestType === "standard_approved") {
     lines.push("");
@@ -80,7 +84,7 @@ function htmlBody(p: SubmitPayload): string {
     p.requestType === "standard_approved"
       ? `<h3 style="margin:24px 0 8px;">Requested changes</h3>
          <p style="margin:0;font-size:14px;">Standard approved — no changes requested.</p>`
-      : r && (r.ram || r.storage || r.screenSize)
+      : r && (r.ram || r.storage || r.screenSize || r.configurationNotes)
       ? `<h3 style="margin:24px 0 8px;">Requested changes</h3>
          <ul style="margin:0;padding-left:18px;">
            ${[
@@ -90,6 +94,9 @@ function htmlBody(p: SubmitPayload): string {
                : "",
              r.screenSize
                ? `<li><strong>Screen:</strong> ${esc(r.screenSize)}</li>`
+               : "",
+             r.configurationNotes
+               ? `<li><strong>Notes:</strong> ${esc(r.configurationNotes)}</li>`
                : "",
            ].join("")}
          </ul>`
@@ -174,6 +181,7 @@ function customRequestsLine(p: SubmitPayload): string {
   if (r.ram) parts.push(`RAM: ${r.ram}`);
   if (r.storage) parts.push(`Storage: ${r.storage}`);
   if (r.screenSize) parts.push(`Screen: ${r.screenSize}`);
+  if (r.configurationNotes) parts.push(`Notes: ${r.configurationNotes}`);
   return parts.join(" · ");
 }
 

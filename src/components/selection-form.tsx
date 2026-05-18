@@ -32,6 +32,7 @@ export function SelectionForm() {
   const [ram, setRam] = useState("");
   const [storage, setStorage] = useState("");
   const [screen, setScreen] = useState("");
+  const [configNotes, setConfigNotes] = useState("");
   const [standardScreen, setStandardScreen] = useState("");
   const [reason, setReason] = useState("");
 
@@ -89,6 +90,7 @@ export function SelectionForm() {
     setRam("");
     setStorage("");
     setScreen("");
+    setConfigNotes("");
     setReason("");
     setStandardScreen("");
   }
@@ -120,6 +122,7 @@ export function SelectionForm() {
             ram: isUpgrade ? ram.trim() || null : null,
             storage: isUpgrade ? storage.trim() || null : null,
             screenSize: isUpgrade ? screen.trim() || null : null,
+            configurationNotes: isUpgrade ? configNotes.trim() || null : null,
           },
         },
         reason: isUpgrade ? reasonT : "",
@@ -311,6 +314,17 @@ export function SelectionForm() {
               onChange={setScreen}
             />
           </fieldset>
+
+          <label className="block">
+            <span className={lbl}>Configuration notes</span>
+            <textarea
+              value={configNotes}
+              onChange={(e) => setConfigNotes(e.target.value)}
+              rows={2}
+              placeholder="Any other requirements or preferences"
+              className={`${input} mt-1 resize-y`}
+            />
+          </label>
 
           <label className="block">
             <span className={lbl}>
