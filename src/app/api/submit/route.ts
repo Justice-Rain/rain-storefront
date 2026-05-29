@@ -7,6 +7,7 @@ type SubmitPayload = {
     brand?: string;
     modelLine?: string;
     category?: string;
+    standardScreenSize?: string | null;
     baseConfig?: Record<string, string>;
     customRequests?: {
       ram?: string | null;
@@ -26,6 +27,17 @@ type SubmitPayload = {
 
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const MACBOOK_PRO_STANDARD_ID = "macbook-pro-14-16";
+const MACBOOK_PRO_SCREEN_SIZES = new Set(['14"', '16"']);
+
+function selectedScreenSize(p: SubmitPayload): string {
+  return (
+    p.selection?.standardScreenSize ??
+    p.selection?.customRequests?.screenSize ??
+    ""
+  );
+}
 
 function plainText(p: SubmitPayload): string {
   const lines: string[] = [];
@@ -47,6 +59,9 @@ function plainText(p: SubmitPayload): string {
   lines.push("");
   lines.push(`Laptop:    ${s.brand ?? ""} (${s.modelLine ?? ""})`);
   lines.push(`Category:  ${s.category ?? ""}`);
+  if (s.standardScreenSize) {
+    lines.push(`Screen size: ${s.standardScreenSize}`);
+  }
   if (s.baseConfig) {
     lines.push("");
     lines.push("Base configuration:");
@@ -67,7 +82,7 @@ function plainText(p: SubmitPayload): string {
   if (p.requestType === "standard_approved") {
     lines.push("");
     lines.push("Requested changes:");
-    lines.push("  Standard approved — no changes requested.");
+    lines.push(`  ${customRequestsLine(p)}`);
   }
   lines.push("");
   lines.push("Reason:");
@@ -80,10 +95,11 @@ function htmlBody(p: SubmitPayload): string {
   const s = p.selection ?? {};
   const r = s.customRequests;
   const base = s.baseConfig ?? {};
+  const screenSize = selectedScreenSize(p);
   const overrideList =
     p.requestType === "standard_approved"
       ? `<h3 style="margin:24px 0 8px;">Requested changes</h3>
-         <p style="margin:0;font-size:14px;">Standard approved — no changes requested.</p>`
+         <p style="margin:0;font-size:14px;">${esc(customRequestsLine(p))}</p>`
       : r && (r.ram || r.storage || r.screenSize || r.configurationNotes)
       ? `<h3 style="margin:24px 0 8px;">Requested changes</h3>
          <ul style="margin:0;padding-left:18px;">
@@ -120,6 +136,7 @@ function htmlBody(p: SubmitPayload): string {
     <tr><td style="padding:2px 12px 2px 0;color:#71717a;">Chip</td><td>${esc(base.chip ?? "")}</td></tr>
     <tr><td style="padding:2px 12px 2px 0;color:#71717a;">Memory</td><td>${esc(base.memory ?? "")}</td></tr>
     <tr><td style="padding:2px 12px 2px 0;color:#71717a;">Storage</td><td>${esc(base.storage ?? "")}</td></tr>
+    ${screenSize ? `<tr><td style="padding:2px 12px 2px 0;color:#71717a;">Screen size</td><td>${esc(screenSize)}</td></tr>` : ""}
     <tr><td style="padding:2px 12px 2px 0;color:#71717a;">Display</td><td>${esc(base.display ?? "")}</td></tr>
   </table>
   ${overrideList}
@@ -173,7 +190,10 @@ async function sendViaResend(
 
 function customRequestsLine(p: SubmitPayload): string {
   if (p.requestType === "standard_approved") {
-    return "Standard approved — no changes requested.";
+    const screenSize = selectedScreenSize(p);
+    return screenSize
+      ? `Standard approved — screen size: ${screenSize}`
+      : "Standard approved — no changes requested.";
   }
   const r = p.selection?.customRequests;
   if (!r) return "";
@@ -194,9 +214,10 @@ function customRequestsLine(p: SubmitPayload): string {
  *   STOREFRONT_GOOGLE_FORM_ENTRY_PHONE=entry.345...
  *   STOREFRONT_GOOGLE_FORM_ENTRY_ADDRESS=entry.456...
  *   STOREFRONT_GOOGLE_FORM_ENTRY_LAPTOP=entry.567...
- *   STOREFRONT_GOOGLE_FORM_ENTRY_REQUESTS=entry.678...
- *   STOREFRONT_GOOGLE_FORM_ENTRY_REASON=entry.789...
- *   STOREFRONT_GOOGLE_FORM_ENTRY_SUMMARY=entry.890...
+ *   STOREFRONT_GOOGLE_FORM_ENTRY_SCREEN_SIZE=entry.678...
+ *   STOREFRONT_GOOGLE_FORM_ENTRY_REQUESTS=entry.789...
+ *   STOREFRONT_GOOGLE_FORM_ENTRY_REASON=entry.890...
+ *   STOREFRONT_GOOGLE_FORM_ENTRY_SUMMARY=entry.901...
  *
  * Only the entries you map will be sent. The "summary" field is a full
  * plain-text dump for forms that just have one big "details" question.
@@ -215,6 +236,7 @@ async function sendViaGoogleForm(
     LAPTOP: `${p.selection?.brand ?? ""}${
       p.selection?.modelLine ? ` (${p.selection.modelLine})` : ""
     }`,
+    SCREEN_SIZE: selectedScreenSize(p),
     REQUESTS: customRequestsLine(p),
     REASON: p.reason ?? "",
     SUMMARY: plainText(p),
@@ -285,6 +307,13 @@ async function sendViaFormEndpoint(
 
 function validate(p: SubmitPayload): string | null {
   if (!p.selection?.laptopId) return "Please pick a laptop.";
+  if (
+    p.requestType === "standard_approved" &&
+    p.selection.laptopId === MACBOOK_PRO_STANDARD_ID &&
+    !MACBOOK_PRO_SCREEN_SIZES.has(p.selection.standardScreenSize ?? "")
+  ) {
+    return "Please choose a MacBook Pro screen size.";
+  }
   if (
     p.requestType !== "standard_approved" &&
     (!p.reason || p.reason.trim().length < 5)

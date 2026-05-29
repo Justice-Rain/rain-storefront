@@ -109,6 +109,10 @@ export function SelectionForm() {
           brand: selected.brand,
           modelLine: selected.modelLine,
           category: selected.category,
+          standardScreenSize:
+            isStandardApproval && selected.id === "macbook-pro-14-16"
+              ? standardScreen
+              : null,
           baseConfig: {
             display:
               isStandardApproval && selected.id === "macbook-pro-14-16"
