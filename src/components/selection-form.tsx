@@ -168,9 +168,8 @@ export function SelectionForm() {
             Thanks{firstName ? `, ${firstName}` : ""}.
           </h2>
           <p className="mt-1.5 text-[13.5px] text-zinc-600">
-            We&rsquo;ll confirm shipment of your{" "}
-            <strong className="text-zinc-900">{selected.brand}</strong> by email
-            at <span className="text-zinc-900">{emailT}</span>.
+            Your request was submitted. We&rsquo;ll review it and follow up by
+            email if anything else is needed.
           </p>
         </div>
       </section>
